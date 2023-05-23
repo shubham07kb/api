@@ -1,0 +1,100 @@
+{
+  "site": {
+    "sitename": "CMS",
+    "about": "CMS Node JS",
+    "hoston": 0,
+    "url": "localhost",
+    "isssl": false
+  },
+  "db": {
+    "type": "mongodb",
+    "var": {
+      "url": "mongodb+srv://shub:shub@webcms.gsvkyvd.mongodb.net/?retryWrites=true&w=majority",
+      "dbname":"WebCMS",
+      "prefix":"web_"
+    }
+  },
+  "email": {
+    "isset":true,
+    "type":"smtp",
+    "auth":"pass",
+    "options" :{
+      "host": "gmail",
+      "port":25,
+      "secure": true,
+      "auth": {
+        "user": "yourgmailusername@gmail.com",
+        "pass": "yourgmailpassword"
+      }
+    }
+  },
+  "account": {
+    "on":true,
+    "admin":true,
+    "co-admin":true,
+    "writer":true,
+    "users":true,
+    "ban":true,
+    "settings": {
+      "register": {
+        "on":true,
+        "user":true,
+        "email":true,
+        "name":true,
+        "namef":[{"nf":"First Name","op":false},{"nf":"Last Name","op":true}],
+        "mobile": true,
+        "dob":true,
+        "country":true,
+        "pass":{
+          "min":6,
+          "max":20,
+          "diff":1
+        },
+        "repass":true,
+        "emailv":true,
+        "check":{
+          "term":"/terms",
+          "privacy":"/privacy"
+        },
+        "form":{
+          "type":"flow",
+          "flow":[[["First Name","Last Name"],["email"],["pass"],["repass"]],[["$verify"]],[["mobile"],["dob"],["country"]]]
+        }
+      },
+      "login":{
+        "on":true,
+        "user":true,
+        "email":true,
+        "magiclink":true,
+        "forget":true,
+        "remember":true,
+        "webauthn":true,
+        "remembertime":5184000,
+        "emailv":true,
+        "emailvt":"active",
+        "emailvti":10,
+        "structure":[["user"],["password"],["remember","forget"],["login"],["magiclink","webauthn"]]
+      }
+    }
+  },
+  "security": {
+    "data_t_string": "",
+    "data_t_algo": "",
+    "data_r_string": "",
+    "data_r_algo": ""
+  },
+  "cron":{
+    "on":true,
+    "record":{
+      "on":true,
+      "db": {
+        "type": "mongodb",
+        "var":{
+          "url": "mongodb+srv://shub:shub@cron.tanfhwi.mongodb.net/?retryWrites=true&w=majority",
+          "dbname": "Cron",
+          "prefix": "web_"
+        }
+      }
+    }
+  }
+}

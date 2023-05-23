@@ -1,0 +1,1 @@
+git add --all; git commit -m "working an static pages"; git push -u origin main; git push -u upstream main

@@ -1,20 +1,65 @@
 {
-  "name": "api",
+  "name": "db-api",
   "version": "1.0.0",
-  "description": "api call",
+  "description": "Connect To Database without any more library and software, only for cloud hosted DB.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nodemon app.js"
   },
-  "author": "Shubham",
-  "license": "ISC",
+  "keywords": [
+    "db",
+    "sql",
+    "mongodb",
+    "mongo",
+    "mongo",
+    "atlas",
+    "database"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shubham07kb/cms-node"
+  },
+  "author": "Shubham Kumar Bansal",
+  "email": "kumarbansal.shubham07@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/shubham07kb/cms-node/issues"
+  },
+  "discussion": {
+    "url": "https://github.com/shubham07kb/cms-node/discussions"
+  },
+  "homepage": "https://github.com/shubham07kb/cms-node#readme",
+  "run": "shubham07kb.github.io",
   "dependencies": {
-    "body-parser": "^1.20.1",
+    "base64url": "^3.0.1",
+    "body-parser": "^1.20.2",
+    "clean-css": "^5.3.2",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "ejs": "^3.1.8",
+    "crypto": "^1.0.1",
+    "device-detector-js": "^3.0.3",
+    "ejs": "^3.1.9",
     "express": "^4.18.2",
-    "express-session": "^1.17.3"
+    "image-size": "^1.0.2",
+    "isomorphic-fetch": "^3.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^5.4.0",
+    "mysql2": "^3.3.1",
+    "nodemailer": "^6.9.1",
+    "pg": "^8.10.0",
+    "sharp": "^0.32.1",
+    "uglify-js": "^3.17.4"
+  },
+  "config": {
+    "directory": "./config.json"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "public/*"
+    ]
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }

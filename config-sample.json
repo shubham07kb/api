@@ -1,0 +1,146 @@
+{
+    "//site": {
+        "//sitename": "sitename like Example",
+        "//hoston": "Here put 0, if running on localhost, else 1",
+        "//url": "put url here like localhost:3000 or https://example.com",
+        "//isssl": "true if your website have ssl certificate and can run on https:// (make site auto redirect to https) or else false without string"
+    },
+    "//db": {
+        "//type": "mongodb or mysql or postgre",
+        "//url":"if type is 'mongodb' then pass uri string to mongodb database starts with 'mongodb://' or 'mongodb+srv://'",
+        "//host":"if mysql or postgre, Database host name make sure if its mysql and have port, then put url like localhost:3000",
+        "//name":"if mysql or postgre, Database name make sure",
+        "//user":"if mysql or postgre, Database user name make sure",
+        "//pass":"if mysql or postgre, Database password make sure",
+        "//port":"in postgre port number must be mention in form of number",
+        "//prefix": "Any 1 to 10 chracter that includes alphanumeric characters and '_' only"
+    },
+    "email": {
+        "isset": true,
+        "type": "smtp",
+        "auth": "pass",
+        "options": {
+            "host": "gmail",
+            "port": 25,
+            "secure": true,
+            "auth": {
+                "user": "yourgmailusername@gmail.com",
+                "pass": "yourgmailpassword"
+            }
+        }
+    },
+    "account": {
+        "on": true,
+        "admin": true,
+        "co-admin": true,
+        "writer": true,
+        "users": true,
+        "ban": true,
+        "settings": {
+            "register": {
+                "on": true,
+                "user": true,
+                "email": true,
+                "name": true,
+                "namef": [
+                    {
+                        "nf": "First Name",
+                        "op": false
+                    },
+                    {
+                        "nf": "Last Name",
+                        "op": true
+                    }
+                ],
+                "mobile": true,
+                "dob": true,
+                "country": true,
+                "pass": {
+                    "min": 6,
+                    "max": 20,
+                    "diff": 1
+                },
+                "repass": true,
+                "emailv": true,
+                "check": {
+                    "term": "/terms",
+                    "privacy": "/privacy"
+                },
+                "form": {
+                    "type": "flow",
+                    "flow": [
+                        [
+                            [
+                                "First Name",
+                                "Last Name"
+                            ],
+                            [
+                                "email"
+                            ],
+                            [
+                                "pass"
+                            ],
+                            [
+                                "repass"
+                            ]
+                        ],
+                        [
+                            [
+                                "$verify"
+                            ]
+                        ],
+                        [
+                            [
+                                "mobile"
+                            ],
+                            [
+                                "dob"
+                            ],
+                            [
+                                "country"
+                            ]
+                        ]
+                    ]
+                }
+            },
+            "login": {
+                "on": true,
+                "user": true,
+                "email": true,
+                "magiclink": true,
+                "forget": true,
+                "remember": true,
+                "webauthn": true,
+                "remembertime": 5184000,
+                "emailv": true,
+                "emailvt": "active",
+                "emailvti": 10,
+                "structure": [
+                    [
+                        "user"
+                    ],
+                    [
+                        "password"
+                    ],
+                    [
+                        "remember",
+                        "forget"
+                    ],
+                    [
+                        "login"
+                    ],
+                    [
+                        "magiclink",
+                        "webauthn"
+                    ]
+                ]
+            }
+        }
+    },
+    "security": {
+        "data_t_string": "",
+        "data_t_algo": "",
+        "data_r_string": "",
+        "data_r_algo": ""
+    }
+}
