@@ -109,6 +109,20 @@ async function routeAccept(a) {
       } else { 
         return false;
       }
+    } else if (a[2] == 'jwt') {
+      if (a[3] == 'sign') {
+        return true;
+      } else if (a[3] == 'verify') {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (a[2] == 'db') {
+      if (a[3] == 'mongodb') {
+        return true;
+      } else {
+        return false;
+      }
     } else if (a[2] == 'meta') {
       if (a[3] == 'getMeta') {
         return true;
