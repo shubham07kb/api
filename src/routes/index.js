@@ -41,17 +41,17 @@ async function route(req, res, env, port, path, http, src) {
         }
         res.header("Content-Type", "application/json");
         try{
-          res.send('{status: 200, token: "' + src.jwt.sign(JSON.parse(payload), password, options) + '"}');
+          res.send('{"status": 200, "token": "' + src.jwt.sign(JSON.parse(payload), password, options) + '"}');
         } catch(e){
-          res.send('{status: 500, message: "Wrong Initials", error: "' + e + '"}');
+          res.send('{"status": 500, "message": "Wrong Initials", "error": "' + e + '"}');
         }
       } else if(a[3] == 'verify'){
         const { token, password} = req.body;
         res.header("Content-Type", "application/json");
         try{
-          res.send('{status: 200, payload: ' + JSON.stringify(src.jwt.verify(token, password)) + '}');
+          res.send('{"status": 200, "payload": ' + JSON.stringify(src.jwt.verify(token, password)) + '}');
         } catch(e){
-          res.send('{status: 500, message: "Wrong Initials", error: "' + e + '"}');
+          res.send('{"status": 500, "message"": "Wrong Initials", "error": "' + e + '"}');
         }
       }
     } else if (a[2] == 'meta') {
