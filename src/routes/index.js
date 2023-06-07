@@ -35,6 +35,14 @@ async function route(req, res, env, port, path, http, src) {
     } else if(a[2]=="db"){
       if(a[3]=="mongodb"){
         if(a[4]=="find"){
+          if(req.body.mongoby=="part" || req.body.mongoby=="uri"){
+            if(req.body.mongoby=="part"){
+              if(req.body.mongohead=="mongodb+srv" || req.body.mongohead=="mongodb"){
+                uri=req.body.mongohead+"://"+req.body.mongoacc+".u9dnmjp.mongodb.net/?retryWrites=true&w=majority";
+              }
+            }
+          }
+          p=await src.query({"type":"mongodb", "url":uri, "dbname":req.body.mongodbname}, req.body.tablename, JSON.parse(req.body.data));
           res.header("Content-Type", "application/json");
           res.send("{'status': 200, 'data': " + "test"+ "}");
         }
