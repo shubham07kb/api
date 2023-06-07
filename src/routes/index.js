@@ -40,11 +40,13 @@ async function route(req, res, env, port, path, http, src) {
               if(req.body.mongohead=="mongodb+srv" || req.body.mongohead=="mongodb"){
                 uri=req.body.mongohead+"://"+req.body.mongoacc+".u9dnmjp.mongodb.net/?retryWrites=true&w=majority";
               }
+            } else if(req.body.mongoby=="uri"){
+              uri=req.body.mongouri;
             }
           }
-          p=await src.query({"type":"mongodb", "url":uri, "dbname":req.body.mongodbname}, req.body.tablename, JSON.parse(req.body.data));
+          p=await src.db.query({"type":"mongodb", "url":uri, "dbname":req.body.mongodbname}, req.body.mongotablename, JSON.parse(req.body.mongodata));
           res.header("Content-Type", "application/json");
-          res.send("{'status': 200, 'data': " + "test"+ "}");
+          res.send("{'status': 200, 'data': " + JSON.stringify(p) + "}");
         }
       }
     } else if(a[2] == 'jwt'){
