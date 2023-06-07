@@ -7,7 +7,7 @@ async function route(req, res, env, port, path, http, src) {
     res.header("Content-Type", "application/javascript");
     resp = await src.jsmaker(a[2],src,env);
     res.send(resp);
-  } else if (a[1] == 'manifest.json') { 
+  } else if (a[1] == 'manifest.json') {
     res.header("Content-Type", "application/json");
     res.send(src.fs.readFileSync(src.path.join(env.rp,'/public/json/manifest.json')));
   } else if (a[1] == 'env') {
@@ -31,6 +31,13 @@ async function route(req, res, env, port, path, http, src) {
         p = await src.account.getAccount(req.cookies, env, res);
         res.header("Content-Type", "application/json");
         res.send(p);
+      }
+    } else if(a[2]=="db"){
+      if(a[3]=="mongodb"){
+        if(a[4]=="find"){
+          res.header("Content-Type", "application/json");
+          res.send("{'status': 200, 'data': " + "test"+ "}");
+        }
       }
     } else if(a[2] == 'jwt'){
       if(a[3] == 'sign'){
@@ -129,6 +136,18 @@ async function routeAccept(a) {
       if (a[3] == 'getAccount') {
         return true;
       } else { 
+        return false;
+      }
+    } else if (a[2]=='db') {
+      if (a[3] == 'mongodb') {
+        if(a[4]=='find'){
+          return true;
+        } else if(a[4]=='insert'){
+          return true;
+        } else{
+          return false;
+        }
+      } else {
         return false;
       }
     } else if (a[2] == 'jwt') {
