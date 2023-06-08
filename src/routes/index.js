@@ -2,14 +2,14 @@ async function route(req, res, env, port, path, http, src) {
   a = req.params[0].split('/');
   if (a[1] == 'favicon.ico') {
     res.header('Content-Type', 'image/ico');
-    res.send(src.fs.readFileSync(src.path.join(env.rp,'/public/images/icons/favicon.ico')));
+    res.send(src.fs.readFileSync(src.path.join(env.rp, '/public/images/icons/favicon.ico')));
   } else if (a[1] == 'js') {
     res.header("Content-Type", "application/javascript");
-    resp = await src.jsmaker(a[2],src,env);
+    resp = await src.jsmaker(a[2], src, env);
     res.send(resp);
   } else if (a[1] == 'manifest.json') {
     res.header("Content-Type", "application/json");
-    res.send(src.fs.readFileSync(src.path.join(env.rp,'/public/json/manifest.json')));
+    res.send(src.fs.readFileSync(src.path.join(env.rp, '/public/json/manifest.json')));
   } else if (a[1] == 'env') {
     res.header("Content-Type", "application/json");
     res.send(src.circularToJSON(env))
@@ -32,42 +32,47 @@ async function route(req, res, env, port, path, http, src) {
         res.header("Content-Type", "application/json");
         res.send(p);
       }
-    } else if(a[2]=="db"){
-      if(a[3]=="mongodb"){
-        if(a[4]=="find"){
-          if(req.body.mongoby=="part" || req.body.mongoby=="uri"){
-            if(req.body.mongoby=="part"){
-              if(req.body.mongohead=="mongodb+srv" || req.body.mongohead=="mongodb"){
-                uri=req.body.mongohead+"://"+req.body.mongoacc+".u9dnmjp.mongodb.net/?retryWrites=true&w=majority";
+    } else if (a[2] == "db") {
+      try {
+        if (a[3] == "mongodb") {
+          if (a[4] == "find") {
+            if (req.body.mongoby == "part" || req.body.mongoby == "uri") {
+              if (req.body.mongoby == "part") {
+                if (req.body.mongohead == "mongodb+srv" || req.body.mongohead == "mongodb") {
+                  uri = req.body.mongohead + "://" + req.body.mongoacc + ".u9dnmjp.mongodb.net/?retryWrites=true&w=majority";
+                }
+              } else if (req.body.mongoby == "uri") {
+                uri = req.body.mongouri;
               }
-            } else if(req.body.mongoby=="uri"){
-              uri=req.body.mongouri;
             }
+            p = await src.db.query({ "type": "mongodb", "url": uri, "dbname": req.body.mongodbname }, req.body.mongotablename, JSON.parse(req.body.mongodata));
+            res.header("Content-Type", "application/json");
+            res.send("{'status': 200, 'data': " + JSON.stringify(p) + "}");
           }
-          p=await src.db.query({"type":"mongodb", "url":uri, "dbname":req.body.mongodbname}, req.body.mongotablename, JSON.parse(req.body.mongodata));
-          res.header("Content-Type", "application/json");
-          res.send("{'status': 200, 'data': " + JSON.stringify(p) + "}");
         }
+      } catch (e) {
+        res.header("Content-Type", "application/json");
+        res.send("{'status': 500, 'message': 'Internal Server Error', 'error': '" + e + "'}");
       }
-    } else if(a[2] == 'jwt'){
-      if(a[3] == 'sign'){
-        const { payload, password, expiresIn} = req.body;
+    } else if (a[2] == 'jwt') {
+      if (a[3] == 'sign') {
+        const { payload, password, expiresIn } = req.body;
         const options = {};
-        if(expiresIn){
+        if (expiresIn) {
           options.expiresIn = expiresIn;
         }
         res.header("Content-Type", "application/json");
-        try{
+        try {
           res.send('{"status": 200, "token": "' + src.jwt.sign(JSON.parse(payload), password, options) + '"}');
-        } catch(e){
+        } catch (e) {
           res.send('{"status": 500, "message": "Wrong Initials", "error": "' + e + '"}');
         }
-      } else if(a[3] == 'verify'){
-        const { token, password} = req.body;
+      } else if (a[3] == 'verify') {
+        const { token, password } = req.body;
         res.header("Content-Type", "application/json");
-        try{
+        try {
           res.send('{"status": 200, "payload": ' + JSON.stringify(src.jwt.verify(token, password)) + '}');
-        } catch(e){
+        } catch (e) {
           res.send('{"status": 500, "message"": "Wrong Initials", "error": "' + e + '"}');
         }
       }
@@ -113,8 +118,8 @@ async function route(req, res, env, port, path, http, src) {
         p['secCode'] = JSON.stringify(p1);
         res.send(p);
       }
-    } else if (a[2] == 'sys') { 
-      if (a[3] == 'cron') { 
+    } else if (a[2] == 'sys') {
+      if (a[3] == 'cron') {
         src.cron(req, res, src, env);
       }
     } else {
@@ -124,7 +129,7 @@ async function route(req, res, env, port, path, http, src) {
   } else if (a[1] == 'pc') {
     res.header("Content-Type", "application/json");
     res.send(src.circularToJSON(env));
-  } else if (a[1] == 'minify') { 
+  } else if (a[1] == 'minify') {
     resp = await src.minify(['/public/html', '/public/css', '/public/js'], env.rp);
     res.send(resp);
   } else {
@@ -145,16 +150,16 @@ async function routeAccept(a) {
     if (a[2] == 'account') {
       if (a[3] == 'getAccount') {
         return true;
-      } else { 
+      } else {
         return false;
       }
-    } else if (a[2]=='db') {
+    } else if (a[2] == 'db') {
       if (a[3] == 'mongodb') {
-        if(a[4]=='find'){
+        if (a[4] == 'find') {
           return true;
-        } else if(a[4]=='insert'){
+        } else if (a[4] == 'insert') {
           return true;
-        } else{
+        } else {
           return false;
         }
       } else {
@@ -191,10 +196,10 @@ async function routeAccept(a) {
     } else if (a[2] == 'security') {
       if (a[3] == 'getSecCode') {
         return true;
-      } else { 
+      } else {
         return false;
       }
-    } else if (a[2]=='sys') { 
+    } else if (a[2] == 'sys') {
       if (a[3] == 'cron') {
         return true;
       } else {
