@@ -1,9 +1,9 @@
 const mongo = require('./mongo');
 const mysql = require('./mysql');
 const postgre = require('./postgre');
-async function insertOne(dbvar, tablename, data) { 
+async function insertOne(dbvar, tablename, data, e={}) { 
     if (dbvar.type == 'mongodb') {
-        res=await mongo.insertOne(dbvar.url, dbvar.dbname, tablename, data);
+        res=await mongo.insertOne(dbvar.url, dbvar.dbname, tablename, data, e);
     } else if (dbvar.type == 'mysql') {
         res=await mysql.insertOne(env);
     } else if (dbvar.type == 'postgre') {
