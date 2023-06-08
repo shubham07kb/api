@@ -50,8 +50,6 @@ async function route(req, res, env, port, path, http, src) {
             } else {
               me = JSON.parse(req.body.mongofd);
             }
-            console.log(JSON.parse(req.body.mongodata));
-
             p = await src.db.query({ "type": "mongodb", "url": uri, "dbname": req.body.mongodbname }, req.body.mongotablename, JSON.parse(req.body.mongodata), me);
             res.header("Content-Type", "application/json");
             res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');

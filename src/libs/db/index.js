@@ -32,7 +32,6 @@ async function del(db, env) {
     return res;
 }
 async function query(dbvar, tablename, data, e={}) { 
-    // console.log(dbvar, tablename, data, e);
     if (dbvar.type == 'mongodb') {
         res = await mongo.query(dbvar.url, dbvar.dbname, tablename, data, e);
     } else if (dbvar.type == 'mysql') {
