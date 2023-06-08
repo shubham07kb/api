@@ -1,5 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
-async function query(mongourl, dbname, colname, data, e = {}) {
+async function query(mongourl, dbname, colname, data, e={} ) {
   var db = await MongoClient.connect(mongourl);
   var dbo = await db.db(dbname);
   var r = await dbo.collection(colname).find(data, e).toArray();

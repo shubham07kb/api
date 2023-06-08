@@ -31,9 +31,9 @@ async function del(db, env) {
     }
     return res;
 }
-async function query(dbvar, tablename, data) { 
+async function query(dbvar, tablename, data, e={}) { 
     if (dbvar.type == 'mongodb') {
-        res = await mongo.query(dbvar.url, dbvar.dbname, tablename, data, e={});
+        res = await mongo.query(dbvar.url, dbvar.dbname, tablename, data, e);
     } else if (dbvar.type == 'mysql') {
         res=await mysql.query(env);
     } else if (dbvar.type == 'postgre') {
