@@ -35,22 +35,24 @@ async function route(req, res, env, port, path, http, src) {
     } else if (a[2] == "db") {
       try {
         if (a[3] == "mongodb") {
+          if (req.body.mongoby == "uri") {
+            uri = req.body.mongouri;
+          }
           if (a[4] == "find") {
-            if (req.body.mongoby == "part" || req.body.mongoby == "uri") {
-              if (req.body.mongoby == "part") {
-                if (req.body.mongohead == "mongodb+srv" || req.body.mongohead == "mongodb") {
-                  uri = req.body.mongohead + "://" + req.body.mongoacc + ".u9dnmjp.mongodb.net/?retryWrites=true&w=majority";
-                }
-              } else if (req.body.mongoby == "uri") {
-                uri = req.body.mongouri;
-              }
-            }
             if(req.body.mongofd == undefined){
               me={};
             } else {
               me = JSON.parse(req.body.mongofd);
             }
             p = await src.db.query({ "type": "mongodb", "url": uri, "dbname": req.body.mongodbname }, req.body.mongotablename, JSON.parse(req.body.mongodata), me);
+            res.header("Content-Type", "application/json");
+            res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
+          } else if(a[4]=="insert"){
+            p = await src.db.mongoInsertMany(uri, req.body.mongodbname, mongotablename, JSON.parse(req.body.mongodata));
+            res.header("Content-Type", "application/json");
+            res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
+          } else if(a[4]=="update"){
+            p = await src.db.mongoUpdateMany(uri, req.body.mongodbname, mongotablename, JSON.parse(req.body.mongodata));
             res.header("Content-Type", "application/json");
             res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
           }

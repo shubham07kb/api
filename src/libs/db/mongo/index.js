@@ -42,10 +42,31 @@ async function insert(mongourl, dbname, colname, data) {
     return { status: 'error', statcode: 0, message: e };
   }
 }
+async function insertMany(mongourl, dbname, colname, data) {
+  var db = await MongoClient.connect(mongourl);
+  var dbo = await db.db(dbname);
+  try {
+    const r = await dbo.collection(colname).insertMany(data);
+  } catch (e) {
+    return { status: 'error', statcode: 0, message: e };
+  }
+}
+async function updateMany(mongourl, dbname, colname, updates){
+  var db = await MongoClient.connect(mongourl);
+  var dbo = await db.db(dbname);
+  try{
+    const r = await dbo.collection(colname).updateMany( { $or: updates.map(update => update.query) }, updates.map(update => update.update));
+    return { status: 'success', statcode: 1, message: r };
+  } catch (e) {
+    return { status: 'error', statcode: 0, message: e };
+  }
+}
 module.exports = {
   query: query,
   update: update,
   del: del,
   insert: insert,
-  insertOne: insertOne
+  insertOne: insertOne,
+  insertMany: insertMany,
+  updateMany: updateMany
 }

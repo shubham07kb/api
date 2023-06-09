@@ -45,5 +45,7 @@ module.exports = {
     insertOne: insertOne,
     update: update,
     del: del,
-    query: query
+    query: query,
+    mongoInsertMany: mongo.insertMany,
+    mongoUpdateMany: mongo.updateMany
 }
