@@ -41,11 +41,20 @@ async function query(dbvar, tablename, data, e={}) {
     }
     return res;
 }
+function generateUniqueID(characters, length) {
+    let uniqueID = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      uniqueID += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return uniqueID;
+  }
 module.exports = {
     insertOne: insertOne,
     update: update,
     del: del,
     query: query,
     mongoInsertMany: mongo.insertMany,
-    mongoUpdateMany: mongo.updateMany
+    mongoUpdateMany: mongo.updateMany,
+    generateUniqueID: generateUniqueID
 }

@@ -48,7 +48,23 @@ async function route(req, res, env, port, path, http, src) {
             res.header("Content-Type", "application/json");
             res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
           } else if(a[4]=="insert"){
-            p = await src.db.mongoInsertMany(uri, req.body.mongodbname, mongotablename, JSON.parse(req.body.mongodata));
+            mongodata=JSON.parse(req.body.mongodata);
+            if(req.body.mongomuid=="y"){
+              uidarr=[];
+              for(i=0;i<mongodata.length;i++){
+                guid=generateUniqueID(mongomuidc,mongomuidl);
+                documentExists = await collection.findOne(JSON.parse(req.body.mongomuidf));
+                while (documentExists) {
+                  uniqueID = generateUniqueID(6);
+                  documentExists = await collection.findOne(JSON.parse(req.body.mongomuidf));
+                }
+                uidarr.push(guid);
+              }
+              for(i=0;i<mongodata.length;i++){
+                mongodata[i][req.body.mongomuidf]=uidarr[i];
+              }
+            }
+            p = await src.db.mongoInsertMany(uri, req.body.mongodbname, mongotablename, mongodata);
             res.header("Content-Type", "application/json");
             res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
           } else if(a[4]=="update"){
