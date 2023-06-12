@@ -39,35 +39,45 @@ async function route(req, res, env, port, path, http, src) {
             uri = req.body.mongouri;
           }
           if (a[4] == "find") {
-            if(req.body.mongofd == undefined){
-              me={};
+            if (req.body.mongofd == undefined) {
+              me = {};
             } else {
               me = JSON.parse(req.body.mongofd);
             }
             p = await src.db.query({ "type": "mongodb", "url": uri, "dbname": req.body.mongodbname }, req.body.mongotablename, JSON.parse(req.body.mongodata), me);
             res.header("Content-Type", "application/json");
             res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
-          } else if(a[4]=="insert"){
-            mongodata=JSON.parse(req.body.mongodata);
-            if(req.body.mongomuid=="y"){
-              uidarr=[];
-              for(i=0;i<mongodata.length;i++){
-                guid=generateUniqueID(mongomuidc,mongomuidl);
-                documentExists = await collection.findOne(JSON.parse(req.body.mongomuidf));
-                while (documentExists) {
-                  uniqueID = generateUniqueID(6);
-                  documentExists = await collection.findOne(JSON.parse(req.body.mongomuidf));
+          } else if (a[4] == "insert") {
+            mongodata = JSON.parse(req.body.mongodata);
+            if (req.body.mongomuid == "y") {
+              const properties = req.body.mongomuidf.split(".");
+              let outputObj = {};
+              for (let i = properties.length - 1; i >= 0; i--) {
+                const property = properties[i];
+                const tempObj = {};
+                tempObj[property] = i === properties.length - 1 ? "<random variable>" : outputObj;
+                outputObj = tempObj;
+              }
+              const kp = JSON.stringify(outputObj).split("<random variable>");
+              uidjson = { before: kp[0], after: kp[1] }
+              uidarr = [];
+              for (i = 0; i < mongodata.length; i++) {
+                guid = generateUniqueID(mongomuidc, mongomuidl);
+                documentExists = await collection.findOne(JSON.parse(uidjson.before+guid+uidjson.after));
+                while (documentExists || uidarr.includes(guid)) {
+                  guid = generateUniqueID(mongomuidc, mongomuidl);
+                  documentExists = await collection.findOne(JSON.parse(uidjson.before+guid+uidjson.after));
                 }
                 uidarr.push(guid);
               }
-              for(i=0;i<mongodata.length;i++){
-                mongodata[i][req.body.mongomuidf]=uidarr[i];
+              for (i = 0; i < mongodata.length; i++) {
+                mongodata[i][req.body.mongomuidf] = uidarr[i];
               }
             }
             p = await src.db.mongoInsertMany(uri, req.body.mongodbname, mongotablename, mongodata);
             res.header("Content-Type", "application/json");
             res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
-          } else if(a[4]=="update"){
+          } else if (a[4] == "update") {
             p = await src.db.mongoUpdateMany(uri, req.body.mongodbname, mongotablename, JSON.parse(req.body.mongodata));
             res.header("Content-Type", "application/json");
             res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
