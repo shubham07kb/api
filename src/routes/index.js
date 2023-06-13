@@ -34,55 +34,73 @@ async function route(req, res, env, port, path, http, src) {
       }
     } else if (a[2] == "db") {
       try {
-        if (a[3] == "mongodb") {
-          if (req.body.mongoby == "uri") {
-            uri = req.body.mongouri;
-          }
-          if (a[4] == "find") {
-            if (req.body.mongofd == undefined) {
-              me = {};
-            } else {
-              me = JSON.parse(req.body.mongofd);
-            }
-            p = await src.db.query({ "type": "mongodb", "url": uri, "dbname": req.body.mongodbname }, req.body.mongotablename, JSON.parse(req.body.mongodata), me);
-            res.header("Content-Type", "application/json");
-            res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
-          } else if (a[4] == "insert") {
-            mongodata = JSON.parse(req.body.mongodata);
-            if (req.body.mongomuid == "y") {
-              const properties = req.body.mongomuidf.split(".");
-              let outputObj = {};
-              for (let i = properties.length - 1; i >= 0; i--) {
-                const property = properties[i];
-                const tempObj = {};
-                tempObj[property] = i === properties.length - 1 ? "<random variable>" : outputObj;
-                outputObj = tempObj;
-              }
-              const kp = JSON.stringify(outputObj).split("<random variable>");
-              uidjson = { before: kp[0], after: kp[1] }
-              uidarr = [];
-              for (i = 0; i < mongodata.length; i++) {
-                guid = generateUniqueID(mongomuidc, mongomuidl);
-                documentExists = await collection.findOne(JSON.parse(uidjson.before+guid+uidjson.after));
-                while (documentExists || uidarr.includes(guid)) {
-                  guid = generateUniqueID(mongomuidc, mongomuidl);
-                  documentExists = await collection.findOne(JSON.parse(uidjson.before+guid+uidjson.after));
-                }
-                uidarr.push(guid);
-              }
-              for (i = 0; i < mongodata.length; i++) {
-                mongodata[i][req.body.mongomuidf] = uidarr[i];
-              }
-            }
-            p = await src.db.mongoInsertMany(uri, req.body.mongodbname, mongotablename, mongodata);
-            res.header("Content-Type", "application/json");
-            res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
-          } else if (a[4] == "update") {
-            p = await src.db.mongoUpdateMany(uri, req.body.mongodbname, mongotablename, JSON.parse(req.body.mongodata));
-            res.header("Content-Type", "application/json");
-            res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
-          }
+      if (a[3] == "mongodb") {
+        if (req.body.mongoby == "uri") {
+          uri = req.body.mongouri;
         }
+        if (a[4] == "find") {
+          if (req.body.mongofd == undefined) {
+            me = {};
+          } else {
+            me = JSON.parse(req.body.mongofd);
+          }
+          p = await src.db.query({ "type": "mongodb", "url": uri, "dbname": req.body.mongodbname }, req.body.mongotablename, JSON.parse(req.body.mongodata), me);
+          res.header("Content-Type", "application/json");
+          res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
+        } else if (a[4] == "insert") {
+          mongodata = JSON.parse(req.body.mongodata);
+          console.log(req.body.mongotablename);
+          if (req.body.mongomuid == "y") {
+            const keys = req.body.mongomuidf.split(".");
+            let outputObj = {};
+            for (let i = keys.length - 1; i >= 0; i--) {
+              const property = keys[i];
+              const tempObj = {};
+              tempObj[property] = i === keys.length - 1 ? "<random variable>" : outputObj;
+              outputObj = tempObj;
+            }
+            const kp = JSON.stringify(outputObj).split("<random variable>");
+            uidjson = { before: kp[0], after: kp[1] }
+            uidarr = [];
+            for (i = 0; i < mongodata.length; i++) {
+              documentExists = [{}];
+              guid = src.db.generateUniqueID(req.body.mongomuidc, req.body.mongomuidl);
+              documentExists = await src.db.query({ "type": "mongodb", "url": uri, "dbname": req.body.mongodbname }, req.body.mongotablename, JSON.parse(uidjson.before + guid + uidjson.after), JSON.parse('{"projection":{"_id":0,"'+req.body.mongomuidf+'":1}}'));
+              while (documentExists == 1 || uidarr.includes(guid)) {
+                guid = src.db.generateUniqueID(req.body.mongomuidc, req.body.mongomuidl);
+                documentExists = await src.db.query({ "type": "mongodb", "url": uri, "dbname": req.body.mongodbname }, req.body.mongotablename, JSON.parse(uidjson.before + guid + uidjson.after), JSON.parse('{"projection":{"_id":0,"'+req.body.mongomuidf+'":1}}'));
+              }
+              uidarr.push(guid);
+            }
+            for (i = 0; i < mongodata.length; i++) {
+              let currentValue = mongodata[i];
+
+              for (let j = 0; j < keys.length; j++) {
+                let key = keys[j];
+
+                if (currentValue.hasOwnProperty(key)) {
+                  if (j === keys.length - 1) {
+                    currentValue[key] = uidarr[i];
+                  } else {
+                    currentValue = currentValue[key];
+                  }
+                } else {
+                  break;
+                }
+              }
+            }
+            console.log(uidarr);
+          }
+          console.log(mongodata);
+          p = await src.db.mongoInsertMany(uri, req.body.mongodbname, req.body.mongotablename, mongodata);
+          res.header("Content-Type", "application/json");
+          res.send('{"status": 200, "data": ' + JSON.stringify(p) + ', "values": ' + JSON.stringify(mongodata) + '}');
+        } else if (a[4] == "update") {
+          p = await src.db.mongoUpdateMany(uri, req.body.mongodbname, req.body.mongotablename, JSON.parse(req.body.mongodata));
+          res.header("Content-Type", "application/json");
+          res.send('{"status": 200, "data": ' + JSON.stringify(p) + '}');
+        }
+      }
       } catch (e) {
         res.header("Content-Type", "application/json");
         res.send('{"status": 500, "message": "Internal Server Error", "error": "' + e + '"}');

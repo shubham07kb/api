@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 src = require('./src/app');
 srcf = require('./src');
-const port = process.env.PORT || 8000;    process.env.rp = __dirname;
+const port = process.env.PORT || 80;    process.env.rp = __dirname;
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 app.set('views', path.join(__dirname, 'public/html')); app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
